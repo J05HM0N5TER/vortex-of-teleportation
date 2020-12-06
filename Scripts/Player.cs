@@ -3,18 +3,19 @@ using Godot;
 
 public class Player : KinematicBody2D
 {
-    [Export] private float MoveSpeed;
-    [Export] private float jumpImpulse;
+    [Export] private float MaxSpeed;
+    [Export] private float Acceleration;
+    [Export] private float Friction;
     [Export] private float Gravity;
 
     private float _horizontalInput = 0f;
     private bool _jump;
-    private VelocityBasedCharacterController _cc;
+    private ForceBasedCharacterController _cc;
 
     // Called when the node enters the scene tree for the first time.
     public override void _Ready()
     {
-        _cc = new VelocityBasedCharacterController(this, MoveSpeed, jumpImpulse, Gravity);
+        _cc = new ForceBasedCharacterController(this, MaxSpeed, Acceleration, Friction, Gravity);
     }
 
     // Called every frame. 'delta' is the elapsed time since the previous frame.

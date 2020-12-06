@@ -10,7 +10,6 @@ extents = Vector2( 32.4857, 32.2502 )
 
 [node name="Character" parent="." instance=ExtResource( 2 )]
 position = Vector2( 472.595, 131.461 )
-MoveSpeed = 200.0
 
 [node name="Floor" type="StaticBody2D" parent="."]
 position = Vector2( 513.468, 562.549 )
