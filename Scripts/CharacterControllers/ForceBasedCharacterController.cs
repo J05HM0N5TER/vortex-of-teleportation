@@ -9,21 +9,24 @@ public class ForceBasedCharacterController
 
     private float _maxSpeed;
     private float _acceleration;
-    private float _friction;
     private float _gravity;
+
+    private float _friction;
+    private float _deceleration;
 
     private float _bufferedHorizontalAccleration;
     private Vector2 _velocity;
 
     private KinematicBody2D _kb;
 
-    public ForceBasedCharacterController(KinematicBody2D kb, float maxSpeed, float acceleration, float friction, float gravity)
+    public ForceBasedCharacterController(KinematicBody2D kb, float maxSpeed, float acceleration, float gravity, float friction, float deceleration)
     {
         _kb = kb;
         _maxSpeed = maxSpeed;
         _acceleration = acceleration;
-        _friction = friction;
         _gravity = gravity;
+        _friction = friction;
+        _deceleration = deceleration;
     }
 
     public void ProcessPhysics(float delta)
@@ -33,13 +36,10 @@ public class ForceBasedCharacterController
         _velocity.x = Mathf.Clamp(_velocity.x, -_maxSpeed, _maxSpeed); // Clamp horizontal velocity to "_maxSpeed".
 
         // Applying friction.
-        float currentDirection = Mathf.Sign(_velocity.x);
-        float preFrictionHorizontalVelocity = _velocity.x;
-        float postFrictionHorizontalVelocity = _velocity.x + -currentDirection * _friction * delta;
-
-        _velocity.x = postFrictionHorizontalVelocity;
-        if (Mathf.Sign(preFrictionHorizontalVelocity) != Mathf.Sign(postFrictionHorizontalVelocity))
-            _velocity.x = 0f;
+        if (_bufferedHorizontalAccleration == 0f)
+            CalculateCounterForce(ref _velocity, _friction * delta);
+        else if (Mathf.Sign(_bufferedHorizontalAccleration) != Mathf.Sign(_velocity.x))
+            CalculateCounterForce(ref _velocity, _deceleration * delta);
 
         // Applying gravity.
         _velocity.y += _gravity * delta;
@@ -51,9 +51,20 @@ public class ForceBasedCharacterController
         _velocity = _kb.MoveAndSlide(_velocity, Vector2.Up);
     }
 
+    private void CalculateCounterForce(ref Vector2 velocity, float counterForce)
+    {
+        float currentDirection = Mathf.Sign(velocity.x);
+        float preForceHorizontalVelocity = velocity.x;
+        float postForceHorizontalVelocity = velocity.x + -currentDirection * counterForce;
+
+        velocity.x = postForceHorizontalVelocity;
+        if (Mathf.Sign(preForceHorizontalVelocity) != Mathf.Sign(postForceHorizontalVelocity))
+            velocity.x = 0f;
+    }
+
     public void Move(int direction)
     {
-        _bufferedHorizontalAccleration = direction * (_acceleration + _friction);
+        _bufferedHorizontalAccleration = direction * _acceleration;
     }
 
     public void Jump()

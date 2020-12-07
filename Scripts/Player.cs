@@ -5,8 +5,9 @@ public class Player : KinematicBody2D
 {
     [Export] private float MaxSpeed;
     [Export] private float Acceleration;
-    [Export] private float Friction;
     [Export] private float Gravity;
+    [Export] private float Friction;
+    [Export] private float Deceleration;
 
     private float _horizontalInput = 0f;
     private bool _jump;
@@ -15,7 +16,7 @@ public class Player : KinematicBody2D
     // Called when the node enters the scene tree for the first time.
     public override void _Ready()
     {
-        _cc = new ForceBasedCharacterController(this, MaxSpeed, Acceleration, Friction, Gravity);
+        _cc = new ForceBasedCharacterController(this, MaxSpeed, Acceleration, Gravity, Friction, Deceleration);
     }
 
     // Called every frame. 'delta' is the elapsed time since the previous frame.
