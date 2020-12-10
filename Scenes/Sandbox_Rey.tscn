@@ -10,8 +10,6 @@ extents = Vector2( 32.4857, 32.2502 )
 
 [node name="Character" parent="." instance=ExtResource( 2 )]
 position = Vector2( 99, 463 )
-MaxSpeed = 150.0
-Deceleration = 1200.0
 
 [node name="Floor" type="StaticBody2D" parent="."]
 position = Vector2( 513.468, 562.549 )
@@ -32,4 +30,5 @@ scale = Vector2( 22.8, 1 )
 shape = SubResource( 1 )
 
 [node name="Sprite" type="Sprite" parent="Floor2"]
+position = Vector2( 0.0927296, 2.33478 )
 texture = ExtResource( 1 )

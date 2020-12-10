@@ -8,10 +8,13 @@ extents = Vector2( 32, 32 )
 
 [node name="Character" type="KinematicBody2D"]
 script = ExtResource( 2 )
-MaxSpeed = 250.0
-Acceleration = 550.0
-Gravity = 650.0
-Friction = 650.0
+MaxSpeed = 400.0
+TimeToMaxSpeed = 0.25
+TimeToTurn = 0.5
+TimeToStop = 0.5
+JumpHeight = 150.0
+JumpDuration = 0.5
+FallDuration = 0.3
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 shape = SubResource( 1 )
