@@ -53,9 +53,8 @@ public class ForceBasedCharacterController
         _jumpDuration = jumpDuration;
         _fallDuration = fallDuration;
 
-        // _accelerationConstant = CalculateAcceleration(0f, _maxSpeed, _timeToMaxSpeed);
-        // _decelerationConstant = CalculateAcceleration(_maxSpeed, 0f, _timeToTurn);
-        // _frictionConstant = CalculateAcceleration(_maxSpeed, 0f, _timeToStop);
+        // _accelerationConstant = CalculateAccelerationConstant(0f, _maxSpeed, _timeToMaxSpeed);
+        // _decelerationConstant = CalculateAccelerationConstant(_maxSpeed, 0f, _timeToTurn);
 
         _jumpGravity = CalculateGravityConstant(_jumpHeight, _jumpDuration);
         _fallGravity = CalculateGravityConstant(_jumpHeight, _fallDuration);
@@ -64,6 +63,7 @@ public class ForceBasedCharacterController
         _accelerateThisFrame = false;
         _accelerationConstant = _maxSpeed / (_timeToMaxSpeed * _timeToMaxSpeed);
         _decelerationConstant = _maxSpeed / (_timeToTurn * _timeToTurn);
+        _frictionConstant = CalculateAccelerationConstant(_maxSpeed, 0f, _timeToStop);
     }
 
     private float CalculateT(float y, float a)
@@ -86,13 +86,9 @@ public class ForceBasedCharacterController
                 Accelerate(ref _currentVelocity.x, _accelerationDir, delta);
         }
 
-        // Linear Deceleration
-        // if (bufferedAccelerationDirection != Mathf.Sign(_previousVelocity.x))
-        //     _bufferedHorizontalAccleration = bufferedAccelerationDirection * _decelerationConstant;
-
         // If the player isn't accelerating, apply friction.
         if (!_accelerateThisFrame)
-            _currentVelocity.x += CalculateCounterAcceleration(_previousVelocity.x, _frictionConstant, delta);
+            _currentVelocity.x += CalculateCounterAcceleration(_previousVelocity.x, _frictionConstant, delta) * delta;
 
         // Execute a jump if a jump has been buffered.
         if (_jumpThisTick)

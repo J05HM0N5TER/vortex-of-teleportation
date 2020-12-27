@@ -18,19 +18,13 @@ public class Player : KinematicBody2D
     private ForceBasedCharacterController _cc;
 
     private AnimationTree _animTree;
-    private GraphServer _gServer;
 
-
-    // Called when the node enters the scene tree for the first time.
     public override void _Ready()
     {
         _cc = new ForceBasedCharacterController(this, MaxSpeed, TimeToMaxSpeed, TimeToTurn, TimeToStop, JumpHeight, JumpDuration, FallDuration);
         _animTree = GetNode<AnimationTree>("AnimationTree");
-        _gServer = new GraphServer("localhost", 8080, 100000, new GDLogger());
-        _gServer.StartServer();
     }
 
-    // Called every frame. 'delta' is the elapsed time since the previous frame.
     public override void _Process(float delta)
     {
         _horizontalInput = Input.GetActionStrength("move_right") - Input.GetActionStrength("move_left");
@@ -41,11 +35,8 @@ public class Player : KinematicBody2D
         _animTree.Set("parameters/movement/current", _cc.GetHorizontalVelocity != 0f && _cc.IsGrounded);
     }
 
-    GraphData data;
-    float time;
     public override void _PhysicsProcess(float delta)
     {
-        time += delta;
         base._PhysicsProcess(delta);
 
         _cc.Move((int)_horizontalInput);
@@ -57,9 +48,6 @@ public class Player : KinematicBody2D
         }
 
         _cc.ProcessPhysics(delta);
-        data.y = _cc.GetVelocity.x;
-        data.x = time;
-        _gServer.SendData(data);
     }
 }
 

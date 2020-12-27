@@ -12,10 +12,10 @@ extents = Vector2( 32.3918, 31.549 )
 [node name="Character" parent="." instance=ExtResource( 2 )]
 position = Vector2( 670, 519 )
 scale = Vector2( 2, 2 )
-MaxSpeed = 150.0
-TimeToMaxSpeed = 0.2
+MaxSpeed = 200.0
+TimeToMaxSpeed = 0.25
 TimeToTurn = 0.15
-TimeToStop = 0.0
+TimeToStop = 0.25
 JumpHeight = 70.0
 JumpDuration = 0.3
 FallDuration = 0.25
