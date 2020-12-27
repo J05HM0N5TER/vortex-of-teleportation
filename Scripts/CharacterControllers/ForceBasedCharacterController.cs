@@ -91,7 +91,7 @@ public class ForceBasedCharacterController
             _currentVelocity.x += CalculateCounterAcceleration(_previousVelocity.x, _frictionConstant, delta) * delta;
 
         // Execute a jump if a jump has been buffered.
-        if (_jumpThisTick)
+        if (_jumpThisTick && _kb.IsOnFloor())
             _currentVelocity.y = -_jumpVelocity;
 
         // Determine which gravity to apply.

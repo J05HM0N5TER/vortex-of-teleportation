@@ -1,6 +1,5 @@
 using System;
 using Godot;
-using Graphing_Server;
 
 public class Player : KinematicBody2D
 {
@@ -14,15 +13,17 @@ public class Player : KinematicBody2D
     [Export] private float FallDuration;
 
     private float _horizontalInput = 0f;
-    private bool _jump;
+    private bool _jumpBuffer;
     private ForceBasedCharacterController _cc;
 
     private AnimationTree _animTree;
+    private AnimatedSprite _sprite;
 
     public override void _Ready()
     {
         _cc = new ForceBasedCharacterController(this, MaxSpeed, TimeToMaxSpeed, TimeToTurn, TimeToStop, JumpHeight, JumpDuration, FallDuration);
         _animTree = GetNode<AnimationTree>("AnimationTree");
+        _sprite = GetNode<AnimatedSprite>("AnimatedSprite");
     }
 
     public override void _Process(float delta)
@@ -30,9 +31,12 @@ public class Player : KinematicBody2D
         _horizontalInput = Input.GetActionStrength("move_right") - Input.GetActionStrength("move_left");
 
         if (Input.IsActionJustPressed("jump"))
-            _jump = true;
+            _jumpBuffer = true;
 
-        _animTree.Set("parameters/movement/current", _cc.GetHorizontalVelocity != 0f && _cc.IsGrounded);
+        _animTree.Set("parameters/movement/current", _cc.GetHorizontalVelocity != 0f);
+
+        if (_cc.GetVelocity.x != 0f)
+            _sprite.FlipH = _cc.GetVelocity.x < 0f;
     }
 
     public override void _PhysicsProcess(float delta)
@@ -41,10 +45,10 @@ public class Player : KinematicBody2D
 
         _cc.Move((int)_horizontalInput);
 
-        if (_jump)
+        if (_jumpBuffer)
         {
             _cc.Jump();
-            _jump = false;
+            _jumpBuffer = false;
         }
 
         _cc.ProcessPhysics(delta);

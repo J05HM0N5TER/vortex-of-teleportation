@@ -9,89 +9,89 @@
 [sub_resource type="RectangleShape2D" id=1]
 extents = Vector2( 6, 7 )
 
-[sub_resource type="AtlasTexture" id=26]
+[sub_resource type="AtlasTexture" id=2]
 atlas = ExtResource( 3 )
 region = Rect2( 0, 0, 16, 16 )
 
-[sub_resource type="AtlasTexture" id=27]
+[sub_resource type="AtlasTexture" id=3]
 atlas = ExtResource( 3 )
 region = Rect2( 16, 0, 16, 16 )
 
-[sub_resource type="AtlasTexture" id=28]
+[sub_resource type="AtlasTexture" id=4]
 atlas = ExtResource( 3 )
 region = Rect2( 32, 0, 16, 16 )
 
-[sub_resource type="AtlasTexture" id=29]
+[sub_resource type="AtlasTexture" id=5]
 atlas = ExtResource( 3 )
 region = Rect2( 48, 0, 16, 16 )
 
-[sub_resource type="AtlasTexture" id=30]
+[sub_resource type="AtlasTexture" id=6]
 atlas = ExtResource( 1 )
 region = Rect2( 0, 0, 16, 16 )
 
-[sub_resource type="AtlasTexture" id=31]
+[sub_resource type="AtlasTexture" id=7]
 atlas = ExtResource( 1 )
 region = Rect2( 16, 0, 16, 16 )
 
-[sub_resource type="AtlasTexture" id=32]
+[sub_resource type="AtlasTexture" id=8]
 atlas = ExtResource( 1 )
 region = Rect2( 32, 0, 16, 16 )
 
-[sub_resource type="AtlasTexture" id=33]
+[sub_resource type="AtlasTexture" id=9]
 atlas = ExtResource( 1 )
 region = Rect2( 48, 0, 16, 16 )
 
-[sub_resource type="AtlasTexture" id=34]
+[sub_resource type="AtlasTexture" id=10]
 atlas = ExtResource( 1 )
 region = Rect2( 64, 0, 16, 16 )
 
-[sub_resource type="AtlasTexture" id=35]
+[sub_resource type="AtlasTexture" id=11]
 atlas = ExtResource( 1 )
 region = Rect2( 80, 0, 16, 16 )
 
-[sub_resource type="SpriteFrames" id=21]
+[sub_resource type="SpriteFrames" id=12]
 animations = [ {
-"frames": [ SubResource( 26 ), SubResource( 27 ), SubResource( 28 ), SubResource( 29 ) ],
+"frames": [ SubResource( 2 ), SubResource( 3 ), SubResource( 4 ), SubResource( 5 ) ],
 "loop": true,
 "name": "idle",
 "speed": 10.0
 }, {
-"frames": [ SubResource( 30 ), SubResource( 31 ), SubResource( 32 ), SubResource( 33 ), SubResource( 34 ), SubResource( 35 ) ],
+"frames": [ SubResource( 6 ), SubResource( 7 ), SubResource( 8 ), SubResource( 9 ), SubResource( 10 ), SubResource( 11 ) ],
 "loop": true,
 "name": "run",
 "speed": 10.0
 } ]
 
-[sub_resource type="AnimationNodeAnimation" id=22]
+[sub_resource type="AnimationNodeAnimation" id=13]
 animation = "Idle"
 
-[sub_resource type="AnimationNodeTransition" id=23]
+[sub_resource type="AnimationNodeTransition" id=14]
 input_count = 2
 input_0/name = "idle"
 input_0/auto_advance = false
 input_1/name = "run"
 input_1/auto_advance = false
 
-[sub_resource type="AnimationNodeAnimation" id=24]
+[sub_resource type="AnimationNodeAnimation" id=15]
 animation = "Run"
 
-[sub_resource type="AnimationNodeBlendTree" id=25]
+[sub_resource type="AnimationNodeBlendTree" id=16]
 graph_offset = Vector2( 0, -19.5 )
-nodes/idle/node = SubResource( 22 )
+nodes/idle/node = SubResource( 13 )
 nodes/idle/position = Vector2( 300, 40 )
-nodes/movement/node = SubResource( 23 )
+nodes/movement/node = SubResource( 14 )
 nodes/movement/position = Vector2( 580, 100 )
 nodes/output/position = Vector2( 880, 120 )
-nodes/run/node = SubResource( 24 )
+nodes/run/node = SubResource( 15 )
 nodes/run/position = Vector2( 300, 180 )
 node_connections = [ "output", 0, "movement", "movement", 0, "idle", "movement", 1, "run" ]
 
 [node name="Character" type="KinematicBody2D"]
 script = ExtResource( 2 )
-MaxSpeed = 350.0
-TimeToMaxSpeed = 0.3
-TimeToTurn = 0.2
-TimeToStop = 0.2
+MaxSpeed = 200.0
+TimeToMaxSpeed = 0.2
+TimeToTurn = 0.15
+TimeToStop = 0.4
 JumpHeight = 150.0
 JumpDuration = 0.5
 FallDuration = 0.3
@@ -103,11 +103,10 @@ __meta__ = {
 "_edit_lock_": true
 }
 
-[node name="Sprite" type="AnimatedSprite" parent="."]
+[node name="AnimatedSprite" type="AnimatedSprite" parent="."]
 position = Vector2( 0, -8 )
-frames = SubResource( 21 )
-animation = "run"
-frame = 4
+frames = SubResource( 12 )
+animation = "idle"
 playing = true
 __meta__ = {
 "_edit_lock_": true
@@ -119,7 +118,7 @@ anims/Idle = ExtResource( 4 )
 anims/Run = ExtResource( 5 )
 
 [node name="AnimationTree" type="AnimationTree" parent="."]
-tree_root = SubResource( 25 )
+tree_root = SubResource( 16 )
 anim_player = NodePath("../AnimationPlayer")
 active = true
 parameters/movement/current = 1
