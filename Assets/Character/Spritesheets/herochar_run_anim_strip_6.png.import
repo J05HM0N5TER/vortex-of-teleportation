@@ -2,15 +2,15 @@
 
 importer="texture"
 type="StreamTexture"
-path="res://.import/run07.png-8722af0565316caec9818b569d21a8ce.stex"
+path="res://.import/herochar_run_anim_strip_6.png-635c55f96e1a77e58140e6dfc8188530.stex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://Assets/Gino/Idle, Run & Jump Spritesheets/run07.png"
-dest_files=[ "res://.import/run07.png-8722af0565316caec9818b569d21a8ce.stex" ]
+source_file="res://Assets/Character/Spritesheets/herochar_run_anim_strip_6.png"
+dest_files=[ "res://.import/herochar_run_anim_strip_6.png-635c55f96e1a77e58140e6dfc8188530.stex" ]
 
 [params]
 
