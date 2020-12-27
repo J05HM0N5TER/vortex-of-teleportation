@@ -54,16 +54,3 @@ public class Player : KinematicBody2D
         _cc.ProcessPhysics(delta);
     }
 }
-
-public class GDLogger : ILogger
-{
-    public void Log(string message)
-    {
-        GD.Print(message);
-    }
-
-    public void Log(object message)
-    {
-        GD.Print(message);
-    }
-}
