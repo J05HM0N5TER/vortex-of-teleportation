@@ -17,31 +17,35 @@ public class ForceBasedCharacterController
     private float _jumpDuration;    // Time to reach apex of the jump.
     private float _fallDuration;
 
+    private float _jumpCoyoteTime;
+    private float _ledgeCoyoteTime;
+
     // State
     private float _accelerationConstant;
     private float _decelerationConstant;
     private float _frictionConstant;
 
-    private bool _isGrounded;
-
     private float _jumpVelocity;
     private float _jumpGravity;
     private float _fallGravity;
 
-    private bool _jumpThisTick;
+    private bool _jumpBuffered;
+    private float _jumpTimestamp;
 
-    // private float _bufferedHorizontalAccleration;
+    private float _groundedTimestamp;
+
     private bool _accelerateThisFrame;
     private int _accelerationDir;
 
     private Vector2 _currentVelocity;
-
     private Vector2 _previousVelocity;
+
+    private float _elapsedTime;
 
     // References
     private KinematicBody2D _kb;
-    
-    public ForceBasedCharacterController(KinematicBody2D kb, float maxSpeed, float timeToMaxSpeed, float timeToTurn, float timeToStop, float jumpHeight, float jumpDuration, float fallDuration)
+
+    public ForceBasedCharacterController(KinematicBody2D kb, float maxSpeed, float timeToMaxSpeed, float timeToTurn, float timeToStop, float jumpHeight, float jumpDuration, float fallDuration, float jumpCoyoteTime, float ledgeCoyoteTime)
     {
         _kb = kb;
         _maxSpeed = maxSpeed;
@@ -53,8 +57,8 @@ public class ForceBasedCharacterController
         _jumpDuration = jumpDuration;
         _fallDuration = fallDuration;
 
-        // _accelerationConstant = CalculateAccelerationConstant(0f, _maxSpeed, _timeToMaxSpeed);
-        // _decelerationConstant = CalculateAccelerationConstant(_maxSpeed, 0f, _timeToTurn);
+        _jumpCoyoteTime = jumpCoyoteTime;
+        _ledgeCoyoteTime = ledgeCoyoteTime;
 
         _jumpGravity = CalculateGravityConstant(_jumpHeight, _jumpDuration);
         _fallGravity = CalculateGravityConstant(_jumpHeight, _fallDuration);
@@ -73,14 +77,17 @@ public class ForceBasedCharacterController
 
     public void ProcessPhysics(float delta)
     {
-        _isGrounded = _kb.IsOnFloor();
+        _elapsedTime += delta;
+
+        if (_kb.IsOnFloor())
+            _groundedTimestamp = _elapsedTime;
 
         // Acceleration
         if (_accelerateThisFrame)
         {
             int velocityDir = Mathf.Sign(_currentVelocity.x);
 
-            if (velocityDir != 0 && velocityDir != _accelerationDir)   
+            if (velocityDir != 0 && velocityDir != _accelerationDir)
                 Decelerate(ref _currentVelocity.x, _accelerationDir, delta);
             else
                 Accelerate(ref _currentVelocity.x, _accelerationDir, delta);
@@ -91,8 +98,11 @@ public class ForceBasedCharacterController
             _currentVelocity.x += CalculateCounterAcceleration(_previousVelocity.x, _frictionConstant, delta) * delta;
 
         // Execute a jump if a jump has been buffered.
-        if (_jumpThisTick && _kb.IsOnFloor())
+        if (CanJump())
+        {
             _currentVelocity.y = -_jumpVelocity;
+            _jumpBuffered = false;
+        }
 
         // Determine which gravity to apply.
         float gravityThisFrame = _currentVelocity.y < 0f ? _jumpGravity : _fallGravity;
@@ -133,7 +143,6 @@ public class ForceBasedCharacterController
         // Resetting buffered values for next frame.
         _accelerateThisFrame = false;
         _accelerationDir = 0;
-        _jumpThisTick = false;
     }
 
     private void Accelerate(ref float velocity, int direction, float delta)
@@ -195,6 +204,17 @@ public class ForceBasedCharacterController
         return (2f * height) / time;
     }
 
+    // This function also considers the "coyote time"
+    private bool IsGrounded()
+    {
+        return _elapsedTime <= _groundedTimestamp + _ledgeCoyoteTime;
+    }
+
+    private bool CanJump()
+    {
+        return _jumpBuffered && IsGrounded() && _elapsedTime <= _jumpTimestamp + _jumpCoyoteTime;
+    }
+
     public void Move(int direction)
     {
         _accelerationDir = direction;
@@ -203,11 +223,11 @@ public class ForceBasedCharacterController
 
     public void Jump()
     {
-        _jumpThisTick = true;
+        _jumpTimestamp = _elapsedTime;
+        _jumpBuffered = true;
     }
 
     public float GetHorizontalVelocity => _currentVelocity.x;
     public float GetVerticalVelocity => _currentVelocity.y;
     public Vector2 GetVelocity => _currentVelocity;
-    public bool IsGrounded => _isGrounded;
 }

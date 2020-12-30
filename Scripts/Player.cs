@@ -12,6 +12,9 @@ public class Player : KinematicBody2D
     [Export] private float JumpDuration;    //config
     [Export] private float FallDuration;
 
+    [Export] private float JumpCoyoteTime;
+    [Export] private float LedgeCoyoteTime;
+
     private float _horizontalInput = 0f;
     private bool _jumpBuffer;
     private ForceBasedCharacterController _cc;
@@ -21,7 +24,7 @@ public class Player : KinematicBody2D
 
     public override void _Ready()
     {
-        _cc = new ForceBasedCharacterController(this, MaxSpeed, TimeToMaxSpeed, TimeToTurn, TimeToStop, JumpHeight, JumpDuration, FallDuration);
+        _cc = new ForceBasedCharacterController(this, MaxSpeed, TimeToMaxSpeed, TimeToTurn, TimeToStop, JumpHeight, JumpDuration, FallDuration, JumpCoyoteTime, LedgeCoyoteTime);
         _animTree = GetNode<AnimationTree>("AnimationTree");
         _sprite = GetNode<AnimatedSprite>("AnimatedSprite");
     }
