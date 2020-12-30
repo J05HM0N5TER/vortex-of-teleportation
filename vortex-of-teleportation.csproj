@@ -3,4 +3,9 @@
     <TargetFramework>net472</TargetFramework>
     <RootNamespace>vortexofteleportation</RootNamespace>
   </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Graphing_Server">
+      <HintPath>..\Graphing_Server\Graphing_Server\bin\Release\netstandard2.0\Graphing_Server.dll</HintPath>
+    </Reference>
+  </ItemGroup>
 </Project>

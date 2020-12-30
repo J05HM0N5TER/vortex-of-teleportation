@@ -3,26 +3,43 @@ using Godot;
 
 public class Player : KinematicBody2D
 {
-    [Export] private float MoveSpeed;
-    [Export] private float jumpImpulse;
-    [Export] private float Gravity;
+    [Export] private float MaxSpeed;
+    [Export] private float TimeToMaxSpeed;  // Time to go from 0 - max speed.
+    [Export] private float TimeToTurn;      // Time to change directions from max speed.
+    [Export] private float TimeToStop;      // Time to go from max speed - 0.
+
+    [Export] private float JumpHeight;      //config     
+    [Export] private float JumpDuration;    //config
+    [Export] private float FallDuration;
+
+    [Export] private float JumpCoyoteTime;
+    [Export] private float LedgeCoyoteTime;
 
     private float _horizontalInput = 0f;
-    private bool _jump;
-    private VelocityBasedCharacterController _cc;
+    private bool _jumpBuffer;
+    private ForceBasedCharacterController _cc;
 
-    // Called when the node enters the scene tree for the first time.
+    private AnimationTree _animTree;
+    private AnimatedSprite _sprite;
+
     public override void _Ready()
     {
-        _cc = new VelocityBasedCharacterController(this, MoveSpeed, jumpImpulse, Gravity);
+        _cc = new ForceBasedCharacterController(this, MaxSpeed, TimeToMaxSpeed, TimeToTurn, TimeToStop, JumpHeight, JumpDuration, FallDuration, JumpCoyoteTime, LedgeCoyoteTime);
+        _animTree = GetNode<AnimationTree>("AnimationTree");
+        _sprite = GetNode<AnimatedSprite>("AnimatedSprite");
     }
 
-    // Called every frame. 'delta' is the elapsed time since the previous frame.
     public override void _Process(float delta)
     {
         _horizontalInput = Input.GetActionStrength("move_right") - Input.GetActionStrength("move_left");
+
         if (Input.IsActionJustPressed("jump"))
-            _jump = true;
+            _jumpBuffer = true;
+
+        _animTree.Set("parameters/movement/current", _cc.GetHorizontalVelocity != 0f);
+
+        if (_cc.GetVelocity.x != 0f)
+            _sprite.FlipH = _cc.GetVelocity.x < 0f;
     }
 
     public override void _PhysicsProcess(float delta)
@@ -31,10 +48,10 @@ public class Player : KinematicBody2D
 
         _cc.Move((int)_horizontalInput);
 
-        if (_jump)
+        if (_jumpBuffer)
         {
             _cc.Jump();
-            _jump = false;
+            _jumpBuffer = false;
         }
 
         _cc.ProcessPhysics(delta);
